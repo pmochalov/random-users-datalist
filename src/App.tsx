@@ -2,6 +2,9 @@ import React from "react";
 import { Layout, Table, Col, Row } from "antd";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { fetchUsers, resetUsersState } from "./slices/usersSlice";
+import { RootState } from "./store";
 
 const { Content } = Layout;
 
@@ -20,51 +23,85 @@ const contentStyle: React.CSSProperties = {
     maxWidth: "1200px",
 };
 
-const dataSource = [
-    {
-        key: "1",
-        name: "Mike",
-        age: 32,
-        address: "10 Downing Street",
-    },
-    {
-        key: "2",
-        name: "John",
-        age: 42,
-        address: "10 Downing Street",
-    },
-];
-
 const columns = [
     {
-        title: "Name",
+        title: "Имя",
         dataIndex: "name",
         key: "name",
     },
     {
-        title: "Age",
+        title: "Логин",
+        dataIndex: "login",
+        key: "login",
+    },
+    {
+        title: "Возраст",
         dataIndex: "age",
         key: "age",
     },
     {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
+        title: "Email",
+        dataIndex: "email",
+        key: "email",
+    },
+    {
+        title: "Страна",
+        dataIndex: "country",
+        key: "country",
+    },
+    {
+        title: "Город",
+        dataIndex: "city",
+        key: "city",
     },
 ];
 
-const App: React.FC = () => (
-    <Layout style={layoutStyle}>
-        <Header />
-        <Content style={contentStyle}>
-            <Row>
-                <Col span={24}>
-                    <Table dataSource={dataSource} columns={columns} />
-                </Col>
-            </Row>
-        </Content>
-        <Footer />
-    </Layout>
-);
+const App: React.FC = () => {
+    const dispatch = useAppDispatch();
+
+    const {
+        entities: users,
+        loading,
+        error,
+    } = useAppSelector((state: RootState) => state.users);
+
+    console.log(users);
+
+    React.useEffect(() => {
+        dispatch(fetchUsers());
+    }, [dispatch]);
+
+    React.useEffect(() => {
+        return () => {
+            dispatch(resetUsersState());
+        };
+    }, []);
+
+    if (loading) {
+        return <div>Загрузка...</div>;
+    }
+
+    if (error) {
+        return <div>Ошибка: {error}</div>;
+    }
+
+    return (
+        <Layout style={layoutStyle}>
+            <Header />
+            <Content style={contentStyle}>
+                <Row>
+                    <Col span={24}>
+                        <Table
+                            dataSource={users}
+                            columns={columns}
+                            pagination={{ pageSize: 25 }}
+                        />
+                    </Col>
+                </Row>
+            </Content>
+            <Footer />
+        </Layout>
+    );
+};
 
 export { App };
