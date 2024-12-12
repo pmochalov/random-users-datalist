@@ -11,7 +11,7 @@ const initialState: UsersState = {
 export const fetchUsers = createAsyncThunk<User[], void, {}>(
     'users/fetchUsers',
     async () => {
-        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}?results=50`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}?results=${import.meta.env.VITE_COUNT_RESULTS_IN_PAGE}`);
         const users: User[] = response.data.results.map((user: User) => {
             return {
                 key: user.login.uuid,
@@ -20,7 +20,7 @@ export const fetchUsers = createAsyncThunk<User[], void, {}>(
                 age: user.dob.age,
                 email: user.email,
                 country: user.location.country,
-                city: user.location.city,
+                city: user.location.city
             }
         })
 
