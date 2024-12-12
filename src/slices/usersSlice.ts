@@ -11,7 +11,7 @@ const initialState: UsersState = {
 export const fetchUsers = createAsyncThunk<User[], void, {}>(
     'users/fetchUsers',
     async () => {
-        const response = await axios.get('https://randomuser.me/api/?results=50');
+        const response = await axios.get(`${import.meta.env.VITE_APP_API_URL}?results=50`);
         const users: User[] = response.data.results.map((user: User) => {
             return {
                 key: user.login.uuid,

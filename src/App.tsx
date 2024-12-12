@@ -65,8 +65,6 @@ const App: React.FC = () => {
         error,
     } = useAppSelector((state: RootState) => state.users);
 
-    console.log(users);
-
     React.useEffect(() => {
         dispatch(fetchUsers());
     }, [dispatch]);
